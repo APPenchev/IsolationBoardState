@@ -4,10 +4,10 @@
 #include "BoardState.h"
 
 
-BoardState::BoardState()
+Board::BoardState::BoardState()
 	: BoardState(5, 5, 0, 0, 4, 4) {};
 
-BoardState::~BoardState()
+Board::BoardState::~BoardState()
 {
 	for (int i = 0; i < this->height; i++) {
 		delete[] this->board[i];
@@ -15,7 +15,7 @@ BoardState::~BoardState()
 	delete[] this->board;
 }
 
-BoardState::BoardState(int width, int height)
+Board::BoardState::BoardState(int width, int height)
 	: width(width), height(height)
 {
 	board = new int* [height];
@@ -23,7 +23,7 @@ BoardState::BoardState(int width, int height)
 		board[i] = new int[width];
 	this->fill();
 }
-BoardState::BoardState(int width, int height, int ox, int oy, int xx, int xy)
+Board::BoardState::BoardState(int width, int height, int ox, int oy, int xx, int xy)
 	: width(width), height(height), o_X(ox), x_X(xx), o_Y(oy), x_Y(xy)
 {
 	board = new int* [height];
@@ -34,8 +34,8 @@ BoardState::BoardState(int width, int height, int ox, int oy, int xx, int xy)
 	setPos(x_X, x_Y, 2);
 }
 
-BoardState::BoardState(BoardState& bs, bool side, int x, int y)
-	: BoardState(bs.width, bs.height) {
+Board::BoardState::BoardState(Board::BoardState& bs, bool side, int x, int y)
+	: Board::BoardState(bs.width, bs.height) {
 	for (int i = 0; i < this->height; i++)
 		for (int j = 0; j < this->width; j++)
 			setPos(j, i, bs.getPos(j, i));
@@ -46,14 +46,14 @@ BoardState::BoardState(BoardState& bs, bool side, int x, int y)
 	(side) ? setO(x, y) : setX(x, y);
 }
 
-void BoardState::fill()
+void Board::BoardState::fill()
 {
 	for (int i = 0; i < this->height; i++)
 		for (int j = 0; j < this->width; j++)
-			setPos(j, i, 0);
+			this->setPos(j, i, 0);
 }
 
-void BoardState::GetPossibleBoardStates(std::vector<TreeNode<BoardState*>*>& vec, bool side)
+void Board::BoardState::GetPossibleBoardStates(std::vector<TreeNode<Board::BoardState*>*>& vec, bool side)
 {
 
 	int x = (side) ? this->o_X : this->x_X;
@@ -70,7 +70,7 @@ void BoardState::GetPossibleBoardStates(std::vector<TreeNode<BoardState*>*>& vec
 
 		while ((_x >= 0 && _x < this->width) && (_y >= 0 && _y < this->height))
 		{
-			if (getPos(_x, _y) > 0)
+			if (this->getPos(_x, _y) > 0)
 				break;
 
 			BoardState* bs = new BoardState(*this, side, _x, _y);
@@ -83,7 +83,7 @@ void BoardState::GetPossibleBoardStates(std::vector<TreeNode<BoardState*>*>& vec
 		}
 	}
 }
-void BoardState::GetPossibleMoves(std::vector<std::pair<int, int>>& vec, bool side)
+void Board::BoardState::GetPossibleMoves(std::vector<std::pair<int, int>>& vec, bool side)
 {
 	int x = (side) ? this->o_X : this->x_X;
 	int y = (side) ? this->o_Y : this->x_Y;
@@ -99,7 +99,7 @@ void BoardState::GetPossibleMoves(std::vector<std::pair<int, int>>& vec, bool si
 
 		while ((_x >= 0 && _x < this->width) && (_y >= 0 && _y < this->height))
 		{
-			if (getPos(_x, _y) > 0)
+			if (this->getPos(_x, _y) > 0)
 				break;
 			vec.push_back(std::make_pair(_x, _y));
 			_x += moveSet[a].first;
@@ -108,7 +108,7 @@ void BoardState::GetPossibleMoves(std::vector<std::pair<int, int>>& vec, bool si
 	}
 }
 
-int BoardState::GetPossibleMoves(bool side)
+int Board::BoardState::GetPossibleMoves(bool side)
 {
 	int x = (side) ? this->o_X : this->x_X;
 	int y = (side) ? this->o_Y : this->x_Y;
@@ -125,7 +125,7 @@ int BoardState::GetPossibleMoves(bool side)
 
 		while ((_x >= 0 && _x < this->width) && (_y >= 0 && _y < this->height))
 		{
-			if (getPos(_x, _y) > 0)
+			if (this->getPos(_x, _y) > 0)
 				break;
 			possibleMoves++;
 			_x += moveSet[a].first;
@@ -135,43 +135,43 @@ int BoardState::GetPossibleMoves(bool side)
 	return possibleMoves;
 }
 
-int BoardState::getWidth() const
+int Board::BoardState::getWidth() const
 {
 	return this->width;
 }
-int BoardState::getHeight() const
+int Board::BoardState::getHeight() const
 {
 	return this->height;
 }
-void BoardState::setO(int x, int y) {
+void Board::BoardState::setO(int x, int y) {
 	this->o_X = x;
 	this->o_Y = y;
-	setPos(x, y, 1);
+	this->setPos(x, y, 1);
 }
-void BoardState::setX(int x, int y) {
+void Board::BoardState::setX(int x, int y) {
 	this->x_X = x;
 	this->x_Y = y;
-	setPos(x, y, 2);
+	this->setPos(x, y, 2);
 }
-void BoardState::moveO(int x, int y) {
-	setPos(o_X, o_Y, 3);
-	setO(x, y);
+void Board::BoardState::moveO(int x, int y) {
+	this->setPos(o_X, o_Y, 3);
+	this->setO(x, y);
 }
-void BoardState::moveX(int x, int y) {
-	setPos(x_X, x_Y, 3);
-	setX(x, y);
+void Board::BoardState::moveX(int x, int y) {
+	this->setPos(x_X, x_Y, 3);
+	this->setX(x, y);
 }
-int BoardState::getPos(int x, int y) const
+int Board::BoardState::getPos(int x, int y) const
 {
 	return this->board[y][x];
 }
-void BoardState::setPos(int x, int y, int v)
+void Board::BoardState::setPos(int x, int y, int v)
 {
 	this->board[y][x] = v;
 }
 
 
-void DisplayBoard(BoardState* bs) {
+void Board::DisplayBoard(Board::BoardState* bs) {
 
 	for (int i = 0; i < bs->getHeight(); i++)
 	{
@@ -195,7 +195,7 @@ void DisplayBoard(BoardState* bs) {
 	std::cout << std::endl;
 
 }
-void DisplayBoard(BoardState* bs, int x, int y) {
+void Board::DisplayBoard(Board::BoardState* bs, int x, int y) {
 
 	for (int i = 0; i < bs->getHeight(); i++)
 	{
@@ -222,7 +222,7 @@ void DisplayBoard(BoardState* bs, int x, int y) {
 	std::cout << std::endl;
 
 }
-void DisplayBoard(BoardState* bs, bool side) {
+void Board::DisplayBoard(BoardState* bs, bool side) {
 	std::vector<std::pair<int, int>> allMoves;
 
 	bs->GetPossibleMoves(allMoves, side);
@@ -249,7 +249,7 @@ void DisplayBoard(BoardState* bs, bool side) {
 	std::cout << std::endl;
 
 }
-void DisplayBoard(BoardState* bs, bool side, int move) {
+void Board::DisplayBoard(Board::BoardState* bs, bool side, int move) {
 	std::vector<std::pair<int, int>> allMoves;
 
 	bs->GetPossibleMoves(allMoves, side);
@@ -280,11 +280,39 @@ void DisplayBoard(BoardState* bs, bool side, int move) {
 	std::cout << std::endl;
 
 }
-void DisplayBoards(std::vector<TreeNode<BoardState*>*> TNs, bool side)
+void Board::DisplayBoards(std::vector<TreeNode<Board::BoardState*>*> TNs, bool side)
 {
 	for (size_t i = 0; i < TNs.size(); i++)
 	{
 		std::cout << "\n";
-		DisplayBoard(TNs[i]->val, side);
+		Board::DisplayBoard(TNs[i]->val, side);
 	}
+}
+
+void Board::RandomMove(Board::BoardState*& board, bool start) {
+
+	std::vector<std::pair<int, int>> allMoves;
+	board->GetPossibleMoves(allMoves, false);
+
+	if (start)
+	{
+		int x = 0, y = 0;
+		do
+		{
+			x = rand() % (board->getWidth() - 1);
+			y = rand() % (board->getHeight() - 1);
+			std::cout << x << "  " << y;
+		} while (board->getPos(x, y) != 0);
+
+		board->setX(x, y);
+	}
+	else
+	{
+		int move = rand() % allMoves.size();
+		board->moveX(allMoves[move].first, allMoves[move].second);
+	}
+}
+
+void Board::EvaluatedMove(Board::BoardState*& board, bool start, int depth, int allowedSearch) {
+
 }
